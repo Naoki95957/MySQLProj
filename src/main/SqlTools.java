@@ -18,59 +18,70 @@ public class SqlTools {
 	String pass = "";
 	TextArea output;
 	
+	Thread t = new Thread();
+	
 	SqlTools(String schema, String user, String pass, TextArea output)
 	{
 		this.pass = pass;
 		this.user = user;
 		this.schema = schema;
 		this.output = output;
-		establishConnection();
+		t = new Thread(){
+			public void run()
+			{
+				establishConnection();
+			}
+		};
+		t.start();
 	}
 
 	void establishConnection() 
 	{
 	    try {
 	        //Step 1: Load the JDBC driver
-	        
 	        Class.forName("com.mysql.cj.jdbc.Driver");
 	
 	        //Connect to the database
 	        String url = "jdbc:mysql://localhost:3306/" + schema + "?serverTimezone=UTC&useSSL=TRUE";
+	        System.out.println("");
+	        print("Attempting to login...");
 	        conn = DriverManager.getConnection(url, user, pass);
-	        System.out.println("Successfully logged in");
-	        output.append("Successfully logged in\n");
+	        print("Successfully logged in");
 	        connected = true;
 	        
 	    } catch (ClassNotFoundException e) {
-	        System.out.println("Could not load the driver");
-	        output.append("Could not load the driver\n");
-	        System.out.println("Failed to logged in");
-	        output.append("Failed to logged in\n");
+	    	print("Failed to load driver");
+	    	print("Failed to log in");
 	    } catch (SQLException e) { /* ignored */} finally {
 	    }
 	}
 	
 	void closeConnections()
 	{
+		if(t.isAlive())
+		{
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
         //Close objects
-        System.out.println("Terminating");
-        output.append("Terminating\n");
+		print("Terminating...");
         try {
 			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.out.println("Closed");
-        output.append("Closed\n");
+        print("Closed");
 	}
 	
 	ResultSet query(String query_str)
 	{
         if(!connected)
         {
-        	System.err.println("Not connected to MySQL");
-            output.append("Not connected to MySQL\n");
+        	print("Not connected to MySQL server");
         	return null;
         }
         PreparedStatement p = null;
@@ -79,11 +90,20 @@ public class SqlTools {
 	        //Process the ResultSet
 	        return p.executeQuery();
 		} catch (SQLException e) {
-        	System.err.println("Error with query");
-            output.append("Error with query\n");
+			print("Error with query");
         	System.err.println(e.toString());
         	return null;
 		}
+	}
+	
+	void print()
+	{
+		print("");
+	}
+	void print(String text)
+	{
+		System.out.println(text);
+		output.append(text + "\n");
 	}
 
 	static String readEntry(String prompt) {

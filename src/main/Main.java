@@ -93,13 +93,18 @@ public class Main {
 				ResultSet r = null;
 				try
 				{
-					r = sql.query("select lname, hours from employee, works_on where hours >= 30 and ssn = essn");
+					r = sql.query("select lname, hours from employee, works_on where hours >= 40 and ssn = essn");
+					int count = 0;
 					while(r.next())
 			        {
 			        	String lname = r.getString(1);
 			        	double hours = r.getDouble(2);
 			        	output.append("Result from B: " + lname + " " + hours + "\n");
+			        	System.out.println("Result from B: " + lname + " " + hours);
+			        	++count;
 			        }
+					output.append(count + " total results from B\n");
+					System.out.println(count + " total results from B");
 				}
 				catch (Exception e1)
 				{
@@ -143,7 +148,7 @@ public class Main {
 		{
 			public void run()
 			{	
-				beginClosing(frame, output);
+				beginClosing(frame, output, sql);
 			}
 		};
 		
@@ -181,7 +186,7 @@ public class Main {
 	}
 	
 	
-	public static void beginClosing(JFrame frame, TextArea output)
+	public static void beginClosing(JFrame frame, TextArea output, SqlTools sql)
 	{
 		output.setText("Beginning to close\nwaiting for all threads to finish and terminate...");
 		for(Thread t : threads)
@@ -195,6 +200,7 @@ public class Main {
 				}
 			}
 		}
+		sql.closeConnections();
 		frame.dispose();
 	}
 }
@@ -203,7 +209,14 @@ public class Main {
  * 	
  *  This listener is designed for our specific purpose
  *  However you can plug in any runnable and use have it 
- *  execute any thread
+ *  execute any thread.
+ *  
+ *  This isn't really multi-threading as much as it is managing threads.
+ *  We're overwriting 'run()' and executing our definition.
+ *  
+ *  In order to multi-thread, it is as simple as thread.start() vs thread.run()
+ *  
+ *  HOWEVER, when a thread dies, it cannot start again. It's a javadoc rule! 
  *  
  *  @param button_action
  * 	This is a Runnable object and will takes that thread to execute it when triggered
