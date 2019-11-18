@@ -10,12 +10,4 @@ public class Main {
 		GUI = new GUIWindow(sql);
 	}
 	
-	public void print(String str)
-	{
-		if(GUI != null)
-		{
-			GUI.output.append(str + "\n");
-		}
-		System.out.println(str);
-	}
 }

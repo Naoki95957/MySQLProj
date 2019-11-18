@@ -30,6 +30,7 @@ public class SqlTools {
 		this.pass = pass;
 		this.user = user;
 		this.schema = schema;
+		
 		establishConnection();
 	}
 	
@@ -80,11 +81,10 @@ public class SqlTools {
 		
 		        //Connect to the database
 		        String url = "jdbc:mysql://localhost:3306/" + schema + "?serverTimezone=UTC&useSSL=TRUE";
-		        System.out.println("");
 		        print("Attempting to login...");
 		        conn = DriverManager.getConnection(url, user, pass);
-		        print("Successfully logged in");
-		        connected = true;
+		        connected = conn.isValid(0);
+		        print(connected ? "Successfully logged in":"Failed to log in");
 		        
 		    } catch (ClassNotFoundException e) {
 		    	print("Failed to load driver");
@@ -105,6 +105,7 @@ public class SqlTools {
 				try {
 					t.join();
 				} catch (InterruptedException e) {
+					//these threads better not be interrupted...
 					e.printStackTrace();
 				}
 			}
