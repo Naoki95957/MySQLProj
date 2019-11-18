@@ -60,13 +60,17 @@ public class Main {
 				ResultSet r = null;
 				try {
 					r = sql.query("select lname, fname from employee order by salary desc limit 5");
+					int count = 0;
 					while(r.next())
 			        {
 			        	String lname = r.getString(1);
 			        	String fname = r.getString(2);
 			        	output.append("Result from A: " + lname + ", " + fname + "\n");
 			        	System.out.println("Result from A: " + lname + ", " + fname);
+			        	++count;
 			        }
+					output.append(count + " total results from A");
+					System.out.println(count + " total results from A\n");
 				}
 				catch (Exception e1)
 				{
