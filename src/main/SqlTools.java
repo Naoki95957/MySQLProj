@@ -7,8 +7,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.*;
 
 public class SqlTools {
+	
+	List<Thread> threads = new LinkedList<Thread>();
 	
 	boolean connected = false;
 	Connection conn = null;
@@ -18,58 +21,102 @@ public class SqlTools {
 	String pass = "";
 	TextArea output;
 	
-	Thread t = new Thread();
+	boolean loggingIn = false;
 	
-	SqlTools(String schema, String user, String pass, TextArea output)
+	boolean outputAttached = false;
+	
+	SqlTools(String schema, String user, String pass)
 	{
 		this.pass = pass;
 		this.user = user;
 		this.schema = schema;
+		establishConnection();
+	}
+	
+	/***
+	 * Attach text output stream from SQL
+	 * @param output
+	 */
+	void attachOutput(TextArea output)
+	{
 		this.output = output;
-		t = new Thread(){
+		outputAttached = true;
+	}
+	
+	/***
+	 * Remove text output stream from SQL
+	 */
+	void removeOutput()
+	{
+		outputAttached = false;
+	}
+	
+	public void establishConnection()
+	{
+		///start new thread to begin login process
+		Thread t = new Thread(){
 			public void run()
 			{
-				establishConnection();
+				establishConnectionToSQL();
 			}
+			
 		};
+		threads.add(t);
 		t.start();
 	}
-
-	void establishConnection() 
-	{
-	    try {
-	        //Step 1: Load the JDBC driver
-	        Class.forName("com.mysql.cj.jdbc.Driver");
 	
-	        //Connect to the database
-	        String url = "jdbc:mysql://localhost:3306/" + schema + "?serverTimezone=UTC&useSSL=TRUE";
-	        System.out.println("");
-	        print("Attempting to login...");
-	        conn = DriverManager.getConnection(url, user, pass);
-	        print("Successfully logged in");
-	        connected = true;
-	        
-	    } catch (ClassNotFoundException e) {
-	    	print("Failed to load driver");
-	    	print("Failed to log in");
-	    } catch (SQLException e) { /* ignored */} finally {
-	    }
+	private void establishConnectionToSQL() 
+	{
+		if(loggingIn)
+		{
+			print("Already attempting to login");
+		}
+		else
+		{
+			loggingIn = true;
+			try {
+		        //Step 1: Load the JDBC driver
+		        Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		        //Connect to the database
+		        String url = "jdbc:mysql://localhost:3306/" + schema + "?serverTimezone=UTC&useSSL=TRUE";
+		        System.out.println("");
+		        print("Attempting to login...");
+		        conn = DriverManager.getConnection(url, user, pass);
+		        print("Successfully logged in");
+		        connected = true;
+		        
+		    } catch (ClassNotFoundException e) {
+		    	print("Failed to load driver");
+		    	print("Failed to log in");
+		    } catch (SQLException e) { /* ignored */} finally {
+		    }
+			loggingIn = false;
+		}
 	}
 	
 	void closeConnections()
 	{
-		if(t.isAlive())
-		{
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-        //Close objects
 		print("Terminating...");
+		for(Thread t : threads)
+		{
+			if(t.isAlive())
+			{
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
+        //Close objects
         try {
-			conn.close();
+        	if(connected)
+        	{
+    			conn.close();
+        	}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,7 +150,8 @@ public class SqlTools {
 	void print(String text)
 	{
 		System.out.println(text);
-		output.append(text + "\n");
+		if(outputAttached)
+			output.append(text + "\n");
 	}
 
 	static String readEntry(String prompt) {
