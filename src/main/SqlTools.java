@@ -72,6 +72,10 @@ public class SqlTools {
 		{
 			print("Already attempting to login");
 		}
+		else if(connected)
+		{
+			print("Already connected");
+		}
 		else
 		{
 			loggingIn = true;
@@ -88,8 +92,7 @@ public class SqlTools {
 		        
 		    } catch (ClassNotFoundException e) {
 		    	print("Failed to load driver");
-		    	print("Failed to log in");
-		    } catch (SQLException e) { /* ignored */} finally {
+		    } catch (SQLException e) {/* ignored */} finally {
 		    }
 			loggingIn = false;
 		}
