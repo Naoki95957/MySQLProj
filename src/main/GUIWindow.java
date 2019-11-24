@@ -2,8 +2,6 @@ package main;
 
 import java.awt.FlowLayout;
 import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -11,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GUIWindow {
@@ -25,8 +24,15 @@ public class GUIWindow {
 	
 	List<Thread> threads = new LinkedList<Thread>();
 	
-	JFrame frame;
+	//list of previous panels (to go back)
+	//last item is always the current panel
+	List<JPanel> prevPanels = new LinkedList<JPanel>();
+	
+	JButton backButton;
+	boolean backward = false;
+	
 	JPanel panel;
+	JFrame frame;
 	TextArea output;
 	SqlTools sql;
 	
@@ -38,31 +44,45 @@ public class GUIWindow {
 	
 	public void beginGUI()
 	{
-
-		frame = new JFrame("Query Options");
-		frame.setSize(512, 300);
+		FlowLayout layout = new FlowLayout();
+		layout.setAlignment(FlowLayout.LEFT);
+		
+		frame = new JFrame("International Student Info System");
+		frame.setBounds(0, 0, 512, 512);
+		frame.setResizable(false);
+		frame.setLayout(layout);
 		
 		//doesn't need to exist, you could just add everything to the frame
 		//however its good to put things on a panel so that we can update the UI 
 		//or completely replace the panel easily by removing the panel child vs 
 		//removing each child from the frame
 		panel = new JPanel();
-		panel.setLayout(new FlowLayout());
+		panel.setLayout(new WrapLayout());
+		panel.setBounds(0, 0, frame.getWidth() - 10, frame.getHeight() - 20);
+		panel.setMaximumSize(panel.getSize());
+		panel.setMinimumSize(panel.getSize());
 		panel.setVisible(true);
-		frame.add(panel);
+		
 		
 		//text area output: using it basically like a terminal
 		output = new TextArea();
-		output.setSize(480, 256);
 		output.setEditable(false);
 		sql.attachOutput(output);
 		
 		//instancing of buttons
+		backButton = new JButton("Back");
+		
 		JButton button_a = new JButton("Find highest paid workers.");
 		JButton button_b = new JButton("Find the most worked workers.");
 		JButton clearText = new JButton("Clear output.");
 		JButton reconnect = new JButton("Connect to server.");
-		JButton quit = new JButton("Quit.");
+		
+		JButton quit = new JButton("Quit");
+		
+		//Action thread for back
+		Thread back_action = new Thread(){
+			public void run() {goBack();};
+		};
 		
 		//action thread for button_a
 		Thread button_a_action = new Thread()
@@ -162,8 +182,17 @@ public class GUIWindow {
 		Thread quit_action = new Thread()
 		{
 			public void run()
-			{	
-				beginClosing(frame, output, sql);
+				{	 
+					if (JOptionPane.showConfirmDialog(
+							frame, 
+							"Are you sure you want to quit?", 
+							"Quit?", 
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+					{
+						beginClosing(frame, output, sql);
+			            System.exit(0);
+			        }
 			}
 		};
 		
@@ -173,8 +202,10 @@ public class GUIWindow {
 		threads.add(reconnect_action);
 		threads.add(clear_text_action);
 		threads.add(quit_action);
+		threads.add(back_action);
 		
 		//adding actions to the buttons
+		backButton.addActionListener(new ButtonAction(back_action));
 		button_a.addActionListener(new ButtonAction(button_a_action));
 		button_b.addActionListener(new ButtonAction(button_b_action));
 		reconnect.addActionListener(new ButtonAction(reconnect_action));
@@ -184,60 +215,71 @@ public class GUIWindow {
 		
 		
 		//setting buttons to visible
+		backButton.setVisible(true);
 		button_a.setVisible(true);
 		button_b.setVisible(true);
 		reconnect.setVisible(true);
 		clearText.setVisible(true);
 		quit.setVisible(true);
 
+		backButton.setEnabled(false);
+
 		//adding to display buttons
 		panel.add(button_a);
 		panel.add(button_b);
-		panel.add(reconnect);
 		panel.add(clearText);
-		panel.add(quit);
 		
 		//adding text output to display
 		panel.add(output);
 		frame.setVisible(true);
+		
+		updatePanel(panel);
+
+		frame.add(backButton);
+		frame.add(quit);
+		frame.add(reconnect);
+		
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent)
+		    {
+		    	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		        quit_action.run();
+		    }
+		    
+		});
+	}
+	
+	public void updatePanel(JPanel newPanel)
+	{
+		prevPanels.add(newPanel);
+		newPanel.setVisible(true);
+		frame.add(newPanel);
+		if(prevPanels.size() > 1)
+		{
+			frame.remove(prevPanels.get(prevPanels.size() - 1));
+			backward = true;
+		}
+		backButton.setEnabled(!backward);
+	}
+	
+	public void goBack()
+	{
+		if(prevPanels.size() <= 1)
+		{
+			return;
+		}
+		updatePanel(prevPanels.get(prevPanels.size() - 2));
+		prevPanels.remove(prevPanels.size() - 1);
+		if(prevPanels.size() == 1)
+		{
+			backward = false;
+		}
 	}
 	
 	public void beginClosing(JFrame frame, TextArea output, SqlTools sql)
 	{
 		sql.closeConnections();
 		frame.dispose();
-	}
-
-	/***
-	 * 	
-	 *  This listener is designed for our specific purpose
-	 *  However you can plug in any runnable and use have it 
-	 *  execute any thread.
-	 *  
-	 *  This isn't really multi-threading as much as it is managing threads.
-	 *  We're overwriting 'run()' and executing our definition.
-	 *  
-	 *  In order to multi-thread, it is as simple as thread.start() vs thread.run()
-	 *  
-	 *  HOWEVER, when a thread dies, it cannot start again. It's a javadoc rule! 
-	 *  
-	 *  @param button_action
-	 * 	This is a Runnable object and will takes that thread to execute it when triggered
-	 *  
-	 *	@author Naoki 
-	 */
-	class ButtonAction implements ActionListener
-	{
-		Runnable button_action;
-		
-		ButtonAction(Runnable button_action)
-		{
-			this.button_action = button_action;
-		}
-		
-		public void actionPerformed(ActionEvent e) 
-		{
-			button_action.run();
-		}
 	}
 }
