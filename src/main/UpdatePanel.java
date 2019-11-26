@@ -1,6 +1,9 @@
 package main;
 
 import java.awt.GridLayout;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -79,6 +82,67 @@ public class UpdatePanel extends PanelBuilder{
 		mainPanel.add(optionA);	
 		mainPanel.add(optionB);	
 		mainPanel.add(optionC);
+		
+		a1.addActionListener(new ButtonAction(new Thread(){
+			public void run()
+			{
+				//String arguements [] = new String[12];
+				String types [] = {"SSN", "First Name", "Middle Initial",
+						"Last Name", "Brith Date (YYYY-MM-DD)", "Sex (M or F)",
+						"Address", "graduate status (undergrad or graduate)", "Visa type",
+						"Visa Experation date (YYYY-MM-DD)", "Enrollment date (YYYY-MM-DD)", "Class (YYYY)"};
+				String query = "insert into Student values (?,?,?,?,?,?,?,?,?,?,?)";
+				PreparedStatement preparedStmt = null;;
+				try {
+					preparedStmt = sql.conn.prepareStatement(query);
+					for(int i = 0; i < types.length; ++i)
+					{
+						boolean confirmed = false;
+						while(!confirmed)
+						{
+							Object out = JOptionPane.showInputDialog(null, "Please enter a " + types[i] + ":", "Entry for Students", JOptionPane.PLAIN_MESSAGE);
+							if(out instanceof String)
+							{
+								//TODO REGEX OR PARSE OR 
+								//SCRAP ALL OF THIS 
+								//in favor of just putting it all in as one line
+								if(!((String)out).isEmpty()){
+									String str = (String)out;
+									System.out.println(str);
+									preparedStmt.setString(i + 1, str);
+								}
+								
+							}
+						}
+					}
+					ResultSet r = sql.query(query);
+					r.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}));
+		
+		a2.addActionListener(new ButtonAction(new Thread(){
+			public void run()
+			{
+				
+			}
+		}));
+		
+		a3.addActionListener(new ButtonAction(new Thread(){
+			public void run()
+			{
+				
+			}
+		}));
+		
+		a4.addActionListener(new ButtonAction(new Thread(){
+			public void run()
+			{
+				
+			}
+		}));
 	}
 	
 	public JPanel getPanel() {
