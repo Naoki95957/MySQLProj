@@ -1,5 +1,17 @@
-//OPEN SOURCE WRAPPER PROVIDED ROYALTY FREE FROM:
-//https://tips4java.wordpress.com/2008/11/06/wrap-layout/
+//This was provided for free and for any use:
+//This is simply a layout manager
+/***
+ * obtained from: https://tips4java.wordpress.com/2008/11/06/wrap-layout/
+ * 
+ * "you are free to add the class to any package you wish. As the “Contact Us” 
+ * page says: 
+ * 
+ * 	It should be noted that none of the code presented here is used in any real 
+ * application and therefore you use it at your own risk. You are free to use 
+ * and/or modify any or all code posted on the Java Tips Weblog without restriction. 
+ * A credit in the code comments would be nice, but not in any way mandatory."
+ * 
+ */
 
 package main;
 
@@ -12,7 +24,10 @@ import javax.swing.SwingUtilities;
  */
 public class WrapLayout extends FlowLayout
 {
-	private Dimension preferredLayoutSize;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	* Constructs a new <code>WrapLayout</code> with a left
