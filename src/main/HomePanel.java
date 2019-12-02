@@ -483,7 +483,7 @@ public class HomePanel extends PanelBuilder {
 			        	String ssn = r.getString(1);
 			        	String fname = r.getString(2);
 			        	String lname = r.getString(3);
-			        	String country = r.getString(3);
+			        	String country = r.getString(4);
 			        	
 			        	String out = "Student " + (count + 1) + ":\t" + ssn + ", " + fname + ", " + lname + ", " + country + "\n"; 
 			        	visaPanel.output.append(out);
