@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.GridLayout;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
@@ -16,6 +15,7 @@ public class UpdatePanel extends PanelBuilder{
 
 	public UpdatePanel(GUIWindow gui, SqlTools sql)
 	{
+		
 		this.gui = gui;
 		this.sql = sql;
 		
@@ -75,6 +75,22 @@ public class UpdatePanel extends PanelBuilder{
 		optionC.add(c2);
 		optionC.add(c3);
 		optionC.add(c4);
+
+		a1.setEnabled(true);
+		a2.setEnabled(true);
+		a3.setEnabled(true);
+		a4.setEnabled(true);
+		
+		//TODO enable as they are completed or simply delete/comment these statements
+		b1.setEnabled(false);
+		b2.setEnabled(false);
+		b3.setEnabled(false);
+		b4.setEnabled(false);
+		
+		c1.setEnabled(false);
+		c2.setEnabled(false);
+		c3.setEnabled(false);
+		c4.setEnabled(false);
 		
 		//TODO add threads and actions to all 12 buttons along with input streams...
 		
@@ -85,189 +101,210 @@ public class UpdatePanel extends PanelBuilder{
 		a1.addActionListener(new ButtonAction(new Thread(){
 			public void run()
 			{
-				//String arguements [] = new String[12];
-				String types [] = {
-						"SSN", 
-						"First Name", 
-						"Middle Initial",
-						"Last Name", 
-						"Brith Date (YYYY-MM-DD)", 
-						"Sex (M or F)",
-						"Address", 
-						"graduate status (undergrad or graduate)", 
-						"Visa type",
-						"Visa Experation date (YYYY-MM-DD)", 
-						"Enrollment date (YYYY-MM-DD)", 
-						"Class (YYYY)"
-						};
-				boolean stringsAt [] =
-					{
-						false,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true
-					};
-				String query = "insert into Student values (";
-				try {
-					for(int i = 0; i < types.length; ++i)
-					{
-						boolean confirmed = false;
-						while(!confirmed)
-						{
-							Object out = JOptionPane.showInputDialog(null, "Please enter a " + types[i] + ":", "Entry for Students", JOptionPane.PLAIN_MESSAGE);
-							if(out instanceof String)
-							{
-								//TODO REGEX OR PARSE OR 
-								//SCRAP ALL OF THIS 
-								//in favor of just putting it all in as one line
-								if(!((String)out).isEmpty()){
-									String str = (String)out;
-									System.out.println(str);
-									if(stringsAt[i])
-									{
-										str = "'" + str + "'";
-									}
-									query += str + ", ";
-									confirmed = true;
-								}
-							}
-							else
-							{
-								return;
-							}
-						}
-					}
-					query = query.substring(0, query.length() - ", ".length());
-					query += ")";
-					System.out.println(query);
-					sql.conn.prepareStatement(query).execute();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-					if(e1 instanceof java.sql.SQLSyntaxErrorException)
-					{
-						JOptionPane.showMessageDialog(null, "Error with SQL syntax", "Error", JOptionPane.ERROR_MESSAGE);
-					}
+				if(!sql.connected)
+				{
+					signInMessage();
+					return;
 				}
+				//instructions per input
+				String types [] = 
+				{
+					"SSN", 
+					"First Name", 
+					"Middle Initial",
+					"Last Name", 
+					"Brith Date (YYYY-MM-DD)", 
+					"Sex (M or F)",
+					"Address", 
+					"graduate status (undergrad or graduate)", 
+					"Visa type",
+					"Visa Experation date (YYYY-MM-DD)", 
+					"Enrollment date (YYYY-MM-DD)", 
+					"Class (YYYY)"
+				};
+				//used as a way to identify numbers vs strings
+				boolean stringsAt [] =
+				{
+					false,
+					true,
+					true,
+					true,
+					true,
+					true,
+					true,
+					true,
+					true,
+					true,
+					true,
+					true
+				};
+
+				insertData(types, stringsAt, "Student", "Students");
 			}
 		}));
 		
 		a2.addActionListener(new ButtonAction(new Thread(){
 			public void run()
 			{
-				//String arguements [] = new String[12];
-				String types [] = {
-						"SSN", 
-						"First Name", 
-						"Middle Initial",
-						"Last Name", 
-						"Brith Date (YYYY-MM-DD)", 
-						"Sex (M or F)",
-						"Address", 
-						"graduate status (undergrad or graduate)", 
-						"Visa type",
-						"Visa Experation date (YYYY-MM-DD)", 
-						"Enrollment date (YYYY-MM-DD)", 
-						"Class (YYYY)"
-						};
-				boolean stringsAt [] =
-					{
-						false,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true,
-						true
-					};
-				String query = "insert into Student values (";
-				try {
-					for(int i = 0; i < types.length; ++i)
-					{
-						boolean confirmed = false;
-						while(!confirmed)
-						{
-							Object out = JOptionPane.showInputDialog(null, "Please enter a " + types[i] + ":", "Entry for Students", JOptionPane.PLAIN_MESSAGE);
-							if(out instanceof String)
-							{
-								//TODO REGEX OR PARSE OR 
-								//SCRAP ALL OF THIS 
-								//in favor of just putting it all in as one line
-								if(!((String)out).isEmpty()){
-									String str = (String)out;
-									System.out.println(str);
-									if(stringsAt[i])
-									{
-										str = "'" + str + "'";
-									}
-									query += str + ", ";
-									confirmed = true;
-								}
-							}
-							else
-							{
-								return;
-							}
-						}
-					}
-					query = query.substring(0, query.length() - ", ".length());
-					query += ")";
-					System.out.println(query);
-					sql.conn.prepareStatement(query).execute();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-					if(e1 instanceof java.sql.SQLSyntaxErrorException)
-					{
-						JOptionPane.showMessageDialog(null, "Error with SQL syntax", "Error", JOptionPane.ERROR_MESSAGE);
-					}
+				if(!sql.connected)
+				{
+					signInMessage();
+					return;
 				}
-			}
-		}));
-		
-		a2.addActionListener(new ButtonAction(new Thread(){
-			public void run()
-			{
-				
+				//instructions per input
+				String types [] = {
+						"Course ID", 
+						"Department ID", 
+						"College/University ID (char 8)",
+						"Course name", 
+						"Credits"
+						};
+				//used as a way to identify numbers vs strings
+				boolean stringsAt [] =
+				{
+					true,
+					true,
+					true,
+					true,
+					false
+				};
+				insertData(types, stringsAt, "Course", "Course");
 			}
 		}));
 		
 		a3.addActionListener(new ButtonAction(new Thread(){
 			public void run()
 			{
+				if(!sql.connected)
+				{
+					signInMessage();
+					return;
+				}
+				//instructions per input
+				String types [] = {
+						"Department ID", 
+						"College/University ID (char 8)", 
+						"Department name",
+						"Department address", 
+						"Department head name",
+						"Department head address"
+						};
+				//used as a way to identify numbers vs strings
+				boolean stringsAt [] =
+				{
+					true,
+					true,
+					true,
+					true,
+					true,
+					true,
+				};
 				
+				insertData(types, stringsAt, "Department", "Department");
 			}
 		}));
 		
 		a4.addActionListener(new ButtonAction(new Thread(){
 			public void run()
 			{
-				
+				if(!sql.connected)
+				{
+					signInMessage();
+					return;
+				}
+				//instructions per input
+				String types [] = {
+						"Student SSN", 
+						"Course ID",
+						"Department ID",
+						"College/University ID (char 8)"
+						};
+				//used as a way to identify numbers vs strings
+				boolean stringsAt [] =
+				{
+					true,
+					true,
+					true,
+					true,
+				};
+				insertData(types, stringsAt, "Registered", "Student Registry");
 			}
 		}));
+		
+
+		//... TODO all other update buttons:
+	}
+	
+	public void insertData(String [] types, boolean [] stringsAt, String tableName, String message_tableName)
+	{
+		String query = "insert into " + tableName + " values (";
+		try {
+			for(int i = 0; i < types.length; ++i)
+			{
+				boolean confirmed = false;
+				while(!confirmed)
+				{
+					Object out = JOptionPane.showInputDialog(null, "Please enter a " + types[i] + ":", "Entry for " + message_tableName, JOptionPane.PLAIN_MESSAGE);
+					if(out instanceof String)
+					{
+						if(!((String)out).isEmpty()){
+							String str = (String)out;
+							System.out.println(str);
+							if(stringsAt[i])
+							{
+								str = "'" + str + "'";
+							}
+							query += str + ", ";
+							confirmed = true;
+						}
+					}
+					else
+					{
+						int response = JOptionPane.showConfirmDialog(null, "Are you sure?", "Canceled",
+								JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if(response == JOptionPane.YES_OPTION){
+							return;
+						}
+					}
+				}
+			}
+			query = query.substring(0, query.length() - ", ".length());
+			query += ")";
+			System.out.println(query);
+			sql.conn.prepareStatement(query).execute();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			if(e1 instanceof java.sql.SQLSyntaxErrorException)
+			{
+				JOptionPane.showMessageDialog(null, "Error with SQL syntax:  " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			else if(e1 instanceof java.sql.SQLIntegrityConstraintViolationException)
+			{
+				JOptionPane.showMessageDialog(null, "Error with SQL constraints:  " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "Error with SQL:  " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 	
 	public JPanel getPanel() {
+		JOptionPane.showMessageDialog(null, "You must sign in as administrator for any results, otherwise you will run into submission errors due to privledge requirements.", "Warning", JOptionPane.WARNING_MESSAGE);
 		return mainPanel;
 	}
+
+	public static void signInMessage()
+	{
+		JOptionPane.showMessageDialog(null, "You must sign in first!", "Error", JOptionPane.ERROR_MESSAGE);;
+	}
 	
-	public void failed(String err)
+	public static void failed(String err)
 	{
 		JOptionPane.showMessageDialog(null, "There was a problem:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);;
 	}
 	
-	public void success(String info)
+	public static void success(String info)
 	{
 		JOptionPane.showMessageDialog(null, "Successfully updated with info:\n" + info, "Success", JOptionPane.OK_OPTION);;
 	}

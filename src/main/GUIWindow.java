@@ -48,12 +48,19 @@ public class GUIWindow {
 	
 	public void setUser()
 	{
+		String schema = "";
 		String user = "";
 		String password = "";
 		try 
 		{
+			//Schema name
+			Object IPA = JOptionPane.showInputDialog(null, "Please enter the schema name:", "Enter Schema", JOptionPane.PLAIN_MESSAGE);
+			if(!((String)IPA).isEmpty()){
+				schema = (String)IPA;
+				System.out.println(schema);
+			}
 			//user
-			Object IPA = JOptionPane.showInputDialog(null, "Please enter your username:", "Enter Username", JOptionPane.PLAIN_MESSAGE);
+			IPA = JOptionPane.showInputDialog(null, "Please enter your username:", "Enter Username", JOptionPane.PLAIN_MESSAGE);
 			if(!((String)IPA).isEmpty()){
 				user = (String)IPA;
 				System.out.println(user);
@@ -66,7 +73,7 @@ public class GUIWindow {
 				System.out.println(password);
 			}
 
-			sql.setLoginInfo(user, password);
+			sql.setLoginInfo(schema, user, password);
 			sql.establishConnection();
 		}
 		catch(Exception e)
@@ -105,10 +112,10 @@ public class GUIWindow {
 		sql.attachFrame(frame);
 		
 		//instancing of buttons
-		homeButton = new JButton("Back");
+		homeButton = new JButton("Main Menu");
 		
 		JButton reconnect = new JButton("Connect to server.");
-		JButton changeUser = new JButton("Change user");
+		JButton changeUser = new JButton("Change user/sign-in");
 		JButton quit = new JButton("Quit");
 		
 		currentUserLabel = new JLabel();

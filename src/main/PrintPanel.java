@@ -11,6 +11,14 @@ public class PrintPanel extends PanelBuilder {
 	public GUIWindow gui;
 	public SqlTools sql;
 	
+	JButton reprint;
+	JButton clearText;
+	
+	//doesn't need to exist, you could just add everything to the frame
+	//however its good to put things on a panel so that we can update the UI 
+	//or completely replace the panel easily by removing the panel child vs 
+	//removing each child from the frame
+	
 	public PrintPanel(GUIWindow gui, SqlTools sql)
 	{
 		this.gui = gui;
@@ -18,13 +26,10 @@ public class PrintPanel extends PanelBuilder {
 		rebuild();
 	}
 	
+	//this exists so we can externalize the thread that can be set
+	//for the reprint button. 
 	public void rebuild()
 	{
-		
-		//doesn't need to exist, you could just add everything to the frame
-		//however its good to put things on a panel so that we can update the UI 
-		//or completely replace the panel easily by removing the panel child vs 
-		//removing each child from the frame
 		panel = new JPanel();
 		panel.setLayout(new WrapLayout());
 		panel.setBounds(0, 0, 502, 492);
@@ -37,8 +42,8 @@ public class PrintPanel extends PanelBuilder {
 		output.setEditable(false);
 		sql.attachOutput(output);
 		
-		JButton reprint = new JButton("Re-print");
-		JButton clearText = new JButton("Clear output.");
+		reprint = new JButton("Re-print");
+		clearText = new JButton("Clear output.");
 		
 		//action thread to clear the text output
 		Thread clear_text_action = new Thread()
@@ -63,6 +68,20 @@ public class PrintPanel extends PanelBuilder {
 		panel.add(clearText);
 
 		//adding text output to display
+		panel.add(output);
+	}
+	
+	public void removeReprint()
+	{
+		panel.remove(reprint);
+	}
+	
+	public void addButton(JButton button)
+	{
+		//so that the output remains on the bottom
+		panel.remove(output);
+		
+		panel.add(button);
 		panel.add(output);
 	}
 

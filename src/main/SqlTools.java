@@ -17,6 +17,8 @@ public class SqlTools {
 	
 	boolean connected = false;
 	Connection conn = null;
+	//can turn this on/off
+	boolean using_gui = true;
 
 	String schema = "";
 	String user = "";
@@ -35,8 +37,9 @@ public class SqlTools {
 		this.schema = schema;
 	}
 	
-	void setLoginInfo(String username, String password)
+	void setLoginInfo(String schema, String username, String password)
 	{
+		this.schema = schema;
 		this.user = username;
 		this.pass = password;
 	}
@@ -217,6 +220,10 @@ public class SqlTools {
 	{
         if(!connected)
         {
+        	if(using_gui)
+        	{
+        		UpdatePanel.signInMessage();
+        	}
         	print("Not connected to MySQL server");
         	return null;
         }

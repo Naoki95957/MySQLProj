@@ -14,7 +14,7 @@ GROUP BY Ssn, U_id;
 SELECT Ssn, Fname, Lname
 FROM Student NATURAL JOIN University
 WHERE S_type LIKE 'Undergrad' AND U_name LIKE 'Bellevue College';
-            
+###############################            
 -- 2a) All student contact details
 SELECT DISTINCT Ssn, Fname, Lname, S_address AS Address, D_name AS Major_Dept, U_name AS College
 FROM Student NATURAL JOIN Majors NATURAL JOIN Department NATURAL JOIN University
@@ -30,7 +30,7 @@ SELECT Ssn, Fname, Lname, SUM(Hrs_per_week) AS Hours
 FROM Student NATURAL JOIN Job
 WHERE S_type LIKE 'Undergrad'
 GROUP BY Ssn;
-
+################################
 -- 3a) Visa Status Report
 SELECT V_type AS Visa, I20_exp AS Expiration
 FROM Student
