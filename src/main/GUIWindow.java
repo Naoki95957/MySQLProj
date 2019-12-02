@@ -30,7 +30,9 @@ public class GUIWindow {
 	
 	JButton homeButton;
 	JPanel homePanel;
+	
 	JLabel currentUserLabel;
+	JLabel currentSchemaLabel;
 	public static final String user_prompt = "Logged in as: ";
 	boolean backward = false;
 	
@@ -46,21 +48,42 @@ public class GUIWindow {
 		sql.setGUIWindow(this);
 	}
 	
-	public void setUser()
+	public void setSchema()
 	{
 		String schema = "";
-		String user = "";
-		String password = "";
 		try 
 		{
-			//Schema name
-			Object IPA = JOptionPane.showInputDialog(null, "Please enter the schema name:", "Enter Schema", JOptionPane.PLAIN_MESSAGE);
+			Object IPA = JOptionPane.showInputDialog(null, "Please enter the schema:", "Enter Schema", JOptionPane.PLAIN_MESSAGE);
 			if(!((String)IPA).isEmpty()){
 				schema = (String)IPA;
 				System.out.println(schema);
 			}
+			updateSchemaLabel("Current Schema: " + schema);
+			sql.setSchema(schema);
+			sql.establishConnection();
+		}
+		catch(Exception e)
+		{
+			int response = JOptionPane.showConfirmDialog(null, "Are you sure?", "Canceled",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(response == JOptionPane.YES_OPTION){
+					return;
+				}
+				else
+				{
+					setSchema();
+				}
+		}
+	}
+	
+	public void setUser()
+	{
+		String user = "";
+		String password = "";
+		try 
+		{
 			//user
-			IPA = JOptionPane.showInputDialog(null, "Please enter your username:", "Enter Username", JOptionPane.PLAIN_MESSAGE);
+			Object IPA = JOptionPane.showInputDialog(null, "Please enter your username:", "Enter Username", JOptionPane.PLAIN_MESSAGE);
 			if(!((String)IPA).isEmpty()){
 				user = (String)IPA;
 				System.out.println(user);
@@ -73,7 +96,7 @@ public class GUIWindow {
 				System.out.println(password);
 			}
 
-			sql.setLoginInfo(schema, user, password);
+			sql.setLoginInfo(user, password);
 			sql.establishConnection();
 		}
 		catch(Exception e)
@@ -116,7 +139,11 @@ public class GUIWindow {
 		
 		JButton reconnect = new JButton("Connect to server.");
 		JButton changeUser = new JButton("Change user/sign-in");
+		JButton changeSchema = new JButton("Change Schema");
 		JButton quit = new JButton("Quit");
+
+		currentSchemaLabel = new JLabel("Current Schema: " + sql.schema);
+		currentSchemaLabel.setVisible(true);
 		
 		currentUserLabel = new JLabel();
 		if(sql.connected)
@@ -142,6 +169,17 @@ public class GUIWindow {
 			{
 				sql.closeConnections();
 				setUser();
+				sql.establishConnection();
+			}
+		};
+		
+		Thread changeSchema_action = new Thread()
+		{
+			public void run()
+			{
+				
+				sql.closeConnections();
+				setSchema();
 				sql.establishConnection();
 			}
 		};
@@ -180,12 +218,14 @@ public class GUIWindow {
 		//adding threads to list to check on them later
 		threads.add(reconnect_action);
 		threads.add(quit_action);
+		threads.add(changeSchema_action);
 		threads.add(home_action);
 		
 		//adding actions to the buttons
 		homeButton.addActionListener(new ButtonAction(home_action));
 		reconnect.addActionListener(new ButtonAction(reconnect_action));
 		changeUser.addActionListener(new ButtonAction(changeUser_action));
+		changeSchema.addActionListener(new ButtonAction(changeSchema_action));
 		quit.addActionListener(new ButtonAction(quit_action));
 		
 		
@@ -194,6 +234,7 @@ public class GUIWindow {
 		homeButton.setVisible(true);
 		reconnect.setVisible(true);
 		changeUser.setVisible(true);
+		changeSchema.setVisible(true);
 		quit.setVisible(true);
 
 		homeButton.setEnabled(false);
@@ -205,6 +246,8 @@ public class GUIWindow {
 		frameObjects.add(quit);
 		frameObjects.add(reconnect);
 		frameObjects.add(changeUser);
+		frameObjects.add(changeSchema);
+		frameObjects.add(currentSchemaLabel);
 		frameObjects.add(currentUserLabel);
 		
 		addAll();
@@ -239,14 +282,27 @@ public class GUIWindow {
 	}
 	
 	//update the label for the status at the bottom of the window
-	public void updateLabel(String status)
+	public void updateLoginLabel(String status)
 	{
 		currentUserLabel.setText(status);
+	}
+	
+	public void updateSchemaLabel(String status)
+	{
+		currentSchemaLabel.setText(status);
+		if(frame != null)
+		{
+			frame.repaint();
+		}
 	}
 	
 	public void updatePanel(PanelBuilder panelBuilder)
 	{
 		updatePanel(panelBuilder.getPanel());
+		if(frame != null)
+		{
+			frame.repaint();
+		}
 	}
 	
 	public void updatePanel(JPanel newPanel)

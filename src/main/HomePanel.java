@@ -99,7 +99,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -135,7 +139,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -184,7 +192,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -263,7 +275,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -280,7 +296,7 @@ public class HomePanel extends PanelBuilder {
 				ResultSet r = null;
 				try {
 					String country = requestInput("Please provide a country:", "Enter a country");
-					if(country == null)
+					if(country == null || country.isEmpty())
 					{
 						return;
 					}
@@ -313,7 +329,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						e2.printStackTrace();
 					}
@@ -355,7 +375,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -436,7 +460,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -481,7 +509,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -561,7 +593,11 @@ public class HomePanel extends PanelBuilder {
 				finally
 				{
 					try {
-						r.close();
+						if(r != null)
+						{
+							r.close();
+							
+						}
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();

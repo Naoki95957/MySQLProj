@@ -271,7 +271,10 @@ public class UpdatePanel extends PanelBuilder{
 			query = query.substring(0, query.length() - ", ".length());
 			query += ")";
 			System.out.println(query);
-			sql.conn.prepareStatement(query).execute();
+			if(!sql.conn.prepareStatement(query).execute()) 
+			{
+				throw new SQLException("The first result is an updatecount or there is no result.");
+			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			if(e1 instanceof java.sql.SQLSyntaxErrorException)

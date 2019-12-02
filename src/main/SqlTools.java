@@ -20,7 +20,8 @@ public class SqlTools {
 	//can turn this on/off
 	boolean using_gui = true;
 
-	String schema = "";
+	//default name for our schema
+	String schema = "ProjectPartB";
 	String user = "";
 	String pass = "";
 	TextArea output;
@@ -37,9 +38,13 @@ public class SqlTools {
 		this.schema = schema;
 	}
 	
-	void setLoginInfo(String schema, String username, String password)
+	void setSchema(String schema)
 	{
 		this.schema = schema;
+	}
+	
+	void setLoginInfo(String username, String password)
+	{
 		this.user = username;
 		this.pass = password;
 	}
@@ -76,7 +81,7 @@ public class SqlTools {
 		this.frame = frame;
 		if(loggingIn)
 		{
-			frame.setTitle(GUIWindow.title + " - logging in...");
+			frame.setTitle(GUIWindow.title + " - connecting...");
 		}
 		else
 		{
@@ -121,7 +126,7 @@ public class SqlTools {
 			print("Already attempting to login");
 			if(frame != null)
 			{
-				frame.setTitle(GUIWindow.title + " - We're still trying to login...");
+				frame.setTitle(GUIWindow.title + " - We're still trying to connect...");
 			}
 		}
 		else if(connected)
@@ -144,29 +149,29 @@ public class SqlTools {
 		        print("Attempting to login...");
 		        if(frame != null)
 				{
-					frame.setTitle(GUIWindow.title + " - Logging in...");
-			    	loginStatus("Logging in as: " + user + "...");
+					frame.setTitle(GUIWindow.title + " - connecting...");
+			    	loginStatus("Connecting as: " + user + "...");
 				}
 		        conn = DriverManager.getConnection(url, user, pass);
 		        connected = conn.isValid(0);
-		        print(connected ? "Successfully logged in":"Failed to log in");
+		        print(connected ? "Successfully connected":"Failed to connect");
 		        if(frame != null)
 				{
 		        	if(connected)
 		        	{
-						frame.setTitle(GUIWindow.title + " - Logged in");
+						frame.setTitle(GUIWindow.title + " - connected");
 				    	loginStatus(GUIWindow.user_prompt + user );
 		        	}
 		        	else
 		        	{
-		        		frame.setTitle(GUIWindow.title + " - Failed to log in");
-				    	loginStatus("Failed to login as: " + user );
+		        		frame.setTitle(GUIWindow.title + " - Failed to connect");
+				    	loginStatus("Failed to connect as: " + user );
 		        	}
 				}
 		        
 		    } catch (ClassNotFoundException e) {
 		    	print("Failed to load driver");
-		    	loginStatus("Failed to load");
+		    	loginStatus("Failed to load driver");
         		frame.setTitle(GUIWindow.title + " - Failed to load driver");
 		    } catch (SQLException e) {/* ignored */} finally {
 		    }
@@ -178,8 +183,7 @@ public class SqlTools {
 	{
 		if(parentRef != null)
 		{
-			parentRef.currentUserLabel.setText(status);
-			parentRef.currentUserLabel.setVisible(true);
+			parentRef.updateLoginLabel(status);
 		}
 	}
 	
