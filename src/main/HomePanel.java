@@ -14,7 +14,7 @@ public class HomePanel extends PanelBuilder {
 	
 	JPanel panel;
 	
-	JPanel currentStudents;
+	MenuPanel currentStudents;
 	PrintPanel rulesAndLaws;
 	PanelBuilder updates;
 	
@@ -26,14 +26,7 @@ public class HomePanel extends PanelBuilder {
  *------------------------REPLACE WITH CURR STUDENT QUERY-------------------*
  * 																			*
  * 																			*
- */
-		
-		currentStudents = new JPanel();
-		GridLayout sub_layout = new GridLayout(4, 1);
-		sub_layout.setVgap(3);
-		currentStudents.setLayout(sub_layout);
-		
-		JLabel current_label = new JLabel("Current Student Options:");
+ */	
 		JButton academics = new JButton("Academic information");
 		JButton contact = new JButton("Contact information");
 		JButton visa_status = new JButton("Visa status");
@@ -42,11 +35,7 @@ public class HomePanel extends PanelBuilder {
 		contact.setSize(100, 20);
 		visa_status.setSize(100, 20);
 
-		currentStudents.add(current_label);
-		currentStudents.add(academics);
-		currentStudents.add(contact);
-		currentStudents.add(visa_status);
-		
+		currentStudents = new MenuPanel("Current Student Options:", academics, contact, visa_status);	
 		/**																			*
 		 * 																			*
 		 *																			*

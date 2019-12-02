@@ -24,6 +24,7 @@ public class SqlTools {
 	String schema = "ProjectPartB";
 	String user = "";
 	String pass = "";
+	String serverAddress = "localhost:3306";
 	TextArea output;
 	JFrame frame;
 	
@@ -36,6 +37,11 @@ public class SqlTools {
 	SqlTools(String schema)
 	{
 		this.schema = schema;
+	}
+	
+	void setServerAddress(String address)
+	{
+		this.serverAddress = address;
 	}
 	
 	void setSchema(String schema)
@@ -145,7 +151,7 @@ public class SqlTools {
 		        Class.forName("com.mysql.cj.jdbc.Driver");
 		
 		        //Connect to the database
-		        String url = "jdbc:mysql://localhost:3306/" + schema + "?serverTimezone=UTC&useSSL=TRUE";
+		        String url = "jdbc:mysql://" + serverAddress + "/" + schema + "?serverTimezone=UTC&useSSL=TRUE";
 		        print("Attempting to login...");
 		        if(frame != null)
 				{

@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,8 +29,12 @@ public class GUIWindow {
 	
 	List<Component> frameObjects = new LinkedList<Component>();
 	
-	JButton homeButton;
+	Stack<JPanel> prevPanels = new Stack<JPanel>();
+	
+	JButton backButton;
+	
 	JPanel homePanel;
+	MenuPanel settingsMenu;
 	
 	JLabel currentUserLabel;
 	JLabel currentSchemaLabel;
@@ -72,6 +77,34 @@ public class GUIWindow {
 				else
 				{
 					setSchema();
+				}
+		}
+	}
+	
+	public void setServerAddress()
+	{
+		String address = "";
+		try 
+		{
+			Object IPA = JOptionPane.showInputDialog(null, "Please enter the server address and port (ipv4:port):", "Enter a address", JOptionPane.PLAIN_MESSAGE);
+			if(!((String)IPA).isEmpty()){
+				address = (String)IPA;
+				System.out.println(address);
+			}
+
+			sql.setServerAddress(address);
+			sql.establishConnection();
+		}
+		catch(Exception e)
+		{
+			int response = JOptionPane.showConfirmDialog(null, "Are you sure?", "Canceled",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(response == JOptionPane.YES_OPTION){
+					return;
+				}
+				else
+				{
+					setServerAddress();
 				}
 		}
 	}
@@ -135,13 +168,23 @@ public class GUIWindow {
 		sql.attachFrame(frame);
 		
 		//instancing of buttons
-		homeButton = new JButton("Main Menu");
 		
+		//setting buttons
 		JButton reconnect = new JButton("Connect to server.");
 		JButton changeUser = new JButton("Change user/sign-in");
 		JButton changeSchema = new JButton("Change Schema");
+		JButton databaseAddress = new JButton("Change Server Address");
+		JLabel currentAddress = new JLabel("Current Server Address: \"localhost:3306\"");
+		
+		//Frame buttons
 		JButton quit = new JButton("Quit");
+		JButton settings = new JButton("Settings");
+		backButton = new JButton("Back");
 
+		quit.setSize(100, 20);
+		settings.setSize(100, 20);
+		backButton.setSize(100, 20);
+		
 		currentSchemaLabel = new JLabel("Current Schema: " + sql.schema);
 		currentSchemaLabel.setVisible(true);
 		
@@ -155,11 +198,32 @@ public class GUIWindow {
 			currentUserLabel.setText("Not logged in");
 		}
 		
+		settingsMenu = new MenuPanel("Settings Menu:", reconnect, changeUser, changeSchema, databaseAddress, currentAddress, currentUserLabel, currentSchemaLabel);
+		
+		Thread address_action = new Thread()
+		{
+			public void run()
+			{
+				sql.closeConnections();
+				setServerAddress();
+				currentAddress.setText("Current Server Address: \"" + sql.serverAddress +"\"");
+				sql.establishConnection();
+			}
+		};
+		
+		Thread settings_action = new Thread()
+		{
+			public void run()
+			{
+				updatePanel(settingsMenu);
+			}
+		};
+		
 		//Action thread for home
-		Thread home_action = new Thread()
+		Thread back_action = new Thread()
 		{
 			public void run() {
-				goHome();
+				updatePanel(goBackPanel(), true);
 			}
 		};
 		
@@ -219,36 +283,38 @@ public class GUIWindow {
 		threads.add(reconnect_action);
 		threads.add(quit_action);
 		threads.add(changeSchema_action);
-		threads.add(home_action);
+		threads.add(back_action);
+		threads.add(settings_action);
+		threads.add(address_action);
 		
 		//adding actions to the buttons
-		homeButton.addActionListener(new ButtonAction(home_action));
+		backButton.addActionListener(new ButtonAction(back_action));
+		settings.addActionListener(new ButtonAction(settings_action));
 		reconnect.addActionListener(new ButtonAction(reconnect_action));
 		changeUser.addActionListener(new ButtonAction(changeUser_action));
 		changeSchema.addActionListener(new ButtonAction(changeSchema_action));
+		databaseAddress.addActionListener(new ButtonAction(address_action));
 		quit.addActionListener(new ButtonAction(quit_action));
 		
 		
 		
 		//setting buttons to visible
-		homeButton.setVisible(true);
+		backButton.setVisible(true);
+		settings.setVisible(true);
 		reconnect.setVisible(true);
 		changeUser.setVisible(true);
 		changeSchema.setVisible(true);
+		databaseAddress.setVisible(true);
+		currentAddress.setVisible(true);
 		quit.setVisible(true);
 
-		homeButton.setEnabled(false);
+		backButton.setEnabled(false);
 
 		updatePanel(homePanel);
 
-		frameObjects.add(new JLabel("Settings:"));
-		frameObjects.add(homeButton);
+		frameObjects.add(backButton);
+		frameObjects.add(settings);
 		frameObjects.add(quit);
-		frameObjects.add(reconnect);
-		frameObjects.add(changeUser);
-		frameObjects.add(changeSchema);
-		frameObjects.add(currentSchemaLabel);
-		frameObjects.add(currentUserLabel);
 		
 		addAll();
 		
@@ -296,16 +362,26 @@ public class GUIWindow {
 		}
 	}
 	
+	public JPanel goBackPanel()
+	{
+		if(!prevPanels.isEmpty())
+		{
+			return prevPanels.pop();
+		}
+		return null;
+	}
+	
 	public void updatePanel(PanelBuilder panelBuilder)
 	{
 		updatePanel(panelBuilder.getPanel());
-		if(frame != null)
-		{
-			frame.repaint();
-		}
 	}
 	
 	public void updatePanel(JPanel newPanel)
+	{
+		updatePanel(newPanel, false);
+	}
+	
+	public void updatePanel(JPanel newPanel, boolean skip)
 	{
 		if(currentPanel == null)
 		{
@@ -316,15 +392,19 @@ public class GUIWindow {
 		else
 		{
 			removeAll();
+			if(!skip)
+			{
+				prevPanels.push(currentPanel);
+			}
 			frame.remove(currentPanel);
 			currentPanel = newPanel;
 			if(currentPanel != homePanel)
 			{
-				homeButton.setEnabled(true);
+				backButton.setEnabled(true);
 			}
 			else
 			{
-				homeButton.setEnabled(false);
+				backButton.setEnabled(false);
 			}
 			frame.add(currentPanel);
 			addAll();
