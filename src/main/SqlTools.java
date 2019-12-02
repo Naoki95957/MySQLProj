@@ -20,10 +20,10 @@ public class SqlTools {
 	//can turn this on/off
 	boolean using_gui = true;
 
-	//default name for our schema
+	//defaults for our DB
 	String schema = "ProjectPartB";
-	String user = "";
-	String pass = "";
+	String user = "student";
+	String pass = "password";
 	String serverAddress = "localhost:3306";
 	TextArea output;
 	JFrame frame;

@@ -10,7 +10,7 @@ public class Main {
 		GUI = new GUIWindow(sql);
 		HomePanel home = new HomePanel(GUI, sql);
 		GUI.beginGUI(home.getPanel());
-		GUI.setUser();
+		sql.establishConnection();
 	}
 	
 }

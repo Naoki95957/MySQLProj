@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+//technically doesn't need to exist since we have a menu panel
+//but this would lead to such a giant file that I wanted to separate this
 public class HomePanel extends PanelBuilder {
 	
 	JPanel panel;
