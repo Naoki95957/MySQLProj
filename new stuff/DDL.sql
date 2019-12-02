@@ -27,6 +27,7 @@ CREATE TABLE Student(
     S_address VARCHAR(60),
     S_type VARCHAR(9),
     V_type VARCHAR(4),
+    I20_start DATE,
     I20_exp DATE,
     U_id CHAR(8),
     Enroll_date DATE,

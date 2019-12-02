@@ -118,6 +118,7 @@ public class UpdatePanel extends PanelBuilder{
 					"Address", 
 					"graduate status (undergrad or graduate)", 
 					"Visa type",
+					"Visa start data (YYYY-MM-DD)", 
 					"Visa Experation date (YYYY-MM-DD)", 
 					"Enrollment date (YYYY-MM-DD)", 
 					"Class (YYYY)"
@@ -126,6 +127,7 @@ public class UpdatePanel extends PanelBuilder{
 				boolean stringsAt [] =
 				{
 					false,
+					true,
 					true,
 					true,
 					true,
@@ -293,7 +295,6 @@ public class UpdatePanel extends PanelBuilder{
 	}
 	
 	public JPanel getPanel() {
-		JOptionPane.showMessageDialog(null, "You must sign in as administrator for any results, otherwise you will run into submission errors due to privledge requirements.", "Warning", JOptionPane.WARNING_MESSAGE);
 		return mainPanel;
 	}
 

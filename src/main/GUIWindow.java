@@ -109,6 +109,53 @@ public class GUIWindow {
 		}
 	}
 	
+	public boolean checkForAdmin()
+	{
+		JOptionPane.showMessageDialog(null, "You must sign in as administrator due to privledge requirements.", "Warning", JOptionPane.WARNING_MESSAGE);
+		
+		String user = "";
+		String password = "";
+		try 
+		{
+			//user
+			Object IPA = JOptionPane.showInputDialog(null, "Please enter admin username:", "Enter Username", JOptionPane.PLAIN_MESSAGE);
+			if(!((String)IPA).isEmpty()){
+				user = (String)IPA;
+				System.out.println(user);
+			}
+			//pass
+			JPasswordField passField = new JPasswordField();
+			JOptionPane.showConfirmDialog(null, passField, "Please enter admin password: ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if(passField.getPassword().length != 0){
+				password = String.copyValueOf(passField.getPassword());
+				System.out.println(password);
+			}
+
+			if(user.equals("Batman") && password.equals("Robin"))
+			{
+				return true;
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "Incorrect user/password", "Incorrect Access", JOptionPane.ERROR_MESSAGE);
+				return checkForAdmin();
+			}
+		}
+		catch(Exception e)
+		{
+			int response = JOptionPane.showConfirmDialog(null, "Are you sure?", "Canceled",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(response == JOptionPane.YES_OPTION){
+					return false;
+				}
+				else
+				{
+					checkForAdmin();
+				}
+		}
+		return false;
+	}
+	
 	public void setUser()
 	{
 		String user = "";
@@ -159,6 +206,7 @@ public class GUIWindow {
 		FlowLayout layout = new FlowLayout();
 		layout.setAlignment(FlowLayout.CENTER);
 		layout.setHgap(500);
+		layout.setVgap(10);
 		
 		frame = new JFrame(title);
 		frame.setLocationRelativeTo(null);

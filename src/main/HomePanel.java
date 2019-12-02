@@ -424,18 +424,19 @@ public class HomePanel extends PanelBuilder {
 			{
 				ResultSet r = null;
 				try {
-					r = sql.query("SELECT V_type AS Visa, I20_exp AS Expiration FROM Student GROUP BY Ssn, Fname, Lname");
+					r = sql.query("SELECT V_type AS Visa, I20_start, I20_exp FROM Student GROUP BY Ssn, Fname, Lname;");
 					int count = 0;
 					//print what we're doing
 					visaPanel.output.append("Printing student-visa details:\n");
-					visaPanel.output.append("\tVisa-type, and Experation:\n");
+					visaPanel.output.append("\t\tVisa-type, I-20 start date, and Experation Date:\n");
 					
 					while(r.next())
 			        {
 			        	String visa_type = r.getString(1);
-			        	String experation = r.getString(2);
+			        	String start = r.getString(2);
+			        	String experation = r.getString(3);
 			        	
-			        	String out = "Result " + (count + 1) + ":\t" + visa_type + ", " + experation + "\n"; 
+			        	String out = "Result " + (count + 1) + ":\t" + visa_type + ", " + start + ", " + experation + "\n"; 
 			        	visaPanel.output.append(out);
 			        	System.out.print(out);
 			        	++count;
@@ -660,7 +661,10 @@ public class HomePanel extends PanelBuilder {
 		{
 			public void run()
 			{
-				gui.updatePanel(updates);
+				if(gui.checkForAdmin())
+				{
+					gui.updatePanel(updates);
+				}
 			}
 		};
 
