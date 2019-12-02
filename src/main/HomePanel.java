@@ -33,11 +33,11 @@ public class HomePanel extends PanelBuilder {
 		JButton contact = new JButton("Contact information");
 		JButton visa_status = new JButton("Visa status");
 
-		academics.setSize(100, 20);
-		contact.setSize(100, 20);
-		visa_status.setSize(100, 20);
+		academics.setSize(100 * gui.screenSize.width / gui.hScale, 20 * gui.screenSize.height / gui.vScale);
+		contact.setSize(100 * gui.screenSize.width / gui.hScale, 20 * gui.screenSize.height / gui.vScale);
+		visa_status.setSize(100 * gui.screenSize.width / gui.hScale, 20 * gui.screenSize.height / gui.vScale);
 
-		currentStudents = new MenuPanel("Current Student Options:", academics, contact, visa_status);	
+		currentStudents = new MenuPanel(gui, "Current Student Options:", academics, contact, visa_status);	
 		/**																			*
 		 * 																			*
 		 *																			*
@@ -618,10 +618,10 @@ public class HomePanel extends PanelBuilder {
 		layout.setVgap(5);
 		panel.setLayout(layout);
 		panel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-		panel.setBounds(0, 0, 502, 492);
-		panel.setSize(502, 492);
-		panel.setMaximumSize(new Dimension(502, 492));
-		panel.setMinimumSize(new Dimension(502, 492));
+		panel.setBounds(0, 0, 502 * gui.screenSize.width / gui.hScale, 492 * gui.screenSize.height / gui.vScale);
+		panel.setSize(502 * gui.screenSize.width / gui.hScale, 492 * gui.screenSize.height / gui.vScale);
+		panel.setMaximumSize(new Dimension(502 * gui.screenSize.width / gui.hScale, 492 * gui.screenSize.height / gui.vScale));
+		panel.setMinimumSize(new Dimension(502 * gui.screenSize.width / gui.hScale, 492 * gui.screenSize.height / gui.vScale));
 
 		JButton currStudentsButton = new JButton("Current Students");
 		JButton gradStudentsButton = new JButton("Graduated Students");

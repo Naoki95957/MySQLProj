@@ -15,14 +15,14 @@ public class MenuPanel extends PanelBuilder{
 	private JPanel panel;
 	private JLabel title;
 	
-	public MenuPanel(String title, Component ... components)
+	public MenuPanel(GUIWindow gui, String title, Component ... components)
 	{
 		int size = components.length + 1;
 		GridLayout layout = new GridLayout(size, 1);
 		layout.setVgap(3);
 		panel = new JPanel();
 		panel.setLayout(layout);
-		panel.setBounds(0, 0, 502, 492);
+		panel.setBounds(0, 0, 502 * gui.screenSize.width / gui.hScale, 492 * gui.screenSize.height / gui.vScale);
 		panel.setMaximumSize(panel.getSize());
 		panel.setMinimumSize(panel.getSize());
 		panel.setVisible(true);

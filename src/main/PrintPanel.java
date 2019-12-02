@@ -32,7 +32,7 @@ public class PrintPanel extends PanelBuilder {
 	{
 		panel = new JPanel();
 		panel.setLayout(new WrapLayout());
-		panel.setBounds(0, 0, 502, 492);
+		panel.setBounds(0, 0, 502 * gui.hScale / gui.screenSize.width, 492 * gui.vScale / gui.screenSize.height);
 		panel.setMaximumSize(panel.getSize());
 		panel.setMinimumSize(panel.getSize());
 		panel.setVisible(true);

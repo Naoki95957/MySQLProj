@@ -1,7 +1,9 @@
 package main;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -24,6 +26,10 @@ public class GUIWindow {
 	
 	//(panel) designed to be swapped
 	//labels and buttons that are attached to the frame at all times
+	
+	int vScale = 1080;
+	int hScale = 1920;
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
 	List<Thread> threads = new LinkedList<Thread>();
 	
@@ -210,7 +216,7 @@ public class GUIWindow {
 		
 		frame = new JFrame(title);
 		frame.setLocationRelativeTo(null);
-		frame.setBounds(frame.getBounds().x - 256, frame.getBounds().y - 256, 512, 512);
+		frame.setBounds(frame.getBounds().x - 256 * screenSize.width / hScale, frame.getBounds().y - 256 * screenSize.height / vScale, 512 * screenSize.width / hScale, 512 * screenSize.height / vScale);
 		frame.setResizable(false);
 		frame.setLayout(layout);
 		sql.attachFrame(frame);
@@ -229,9 +235,9 @@ public class GUIWindow {
 		JButton settings = new JButton("Settings");
 		backButton = new JButton("Back");
 
-		quit.setSize(100, 20);
-		settings.setSize(100, 20);
-		backButton.setSize(100, 20);
+		quit.setSize(100 * hScale / screenSize.width, 20 * vScale / screenSize.height);
+		settings.setSize(100* hScale / screenSize.width, 20 * vScale / screenSize.height);
+		backButton.setSize(100* hScale / screenSize.width, 20 * vScale / screenSize.height);
 		
 		currentSchemaLabel = new JLabel("Current Schema: " + sql.schema);
 		currentSchemaLabel.setVisible(true);
@@ -246,7 +252,7 @@ public class GUIWindow {
 			currentUserLabel.setText("Not logged in");
 		}
 		
-		settingsMenu = new MenuPanel("Settings Menu:", reconnect, changeUser, changeSchema, databaseAddress, currentAddress, currentUserLabel, currentSchemaLabel);
+		settingsMenu = new MenuPanel(this, "Settings Menu:", reconnect, changeUser, changeSchema, databaseAddress, currentAddress, currentUserLabel, currentSchemaLabel);
 		
 		Thread address_action = new Thread()
 		{

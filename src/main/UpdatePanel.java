@@ -24,7 +24,7 @@ public class UpdatePanel extends PanelBuilder{
 		mainLayout.setHgap(5);
 		mainLayout.setVgap(4);
 		mainPanel.setLayout(mainLayout);
-		mainPanel.setBounds(0, 0, 502, 492);
+		mainPanel.setBounds(0, 0, 502 * gui.screenSize.width / gui.hScale, 492 * gui.screenSize.height / gui.vScale);
 		mainPanel.setMaximumSize(mainPanel.getSize());
 		mainPanel.setMinimumSize(mainPanel.getSize());
 		mainPanel.setVisible(true);
