@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.GridLayout;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -87,14 +86,37 @@ public class UpdatePanel extends PanelBuilder{
 			public void run()
 			{
 				//String arguements [] = new String[12];
-				String types [] = {"SSN", "First Name", "Middle Initial",
-						"Last Name", "Brith Date (YYYY-MM-DD)", "Sex (M or F)",
-						"Address", "graduate status (undergrad or graduate)", "Visa type",
-						"Visa Experation date (YYYY-MM-DD)", "Enrollment date (YYYY-MM-DD)", "Class (YYYY)"};
-				String query = "insert into Student values (?,?,?,?,?,?,?,?,?,?,?)";
-				PreparedStatement preparedStmt = null;;
+				String types [] = {
+						"SSN", 
+						"First Name", 
+						"Middle Initial",
+						"Last Name", 
+						"Brith Date (YYYY-MM-DD)", 
+						"Sex (M or F)",
+						"Address", 
+						"graduate status (undergrad or graduate)", 
+						"Visa type",
+						"Visa Experation date (YYYY-MM-DD)", 
+						"Enrollment date (YYYY-MM-DD)", 
+						"Class (YYYY)"
+						};
+				boolean stringsAt [] =
+					{
+						false,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true
+					};
+				String query = "insert into Student values (";
 				try {
-					preparedStmt = sql.conn.prepareStatement(query);
 					for(int i = 0; i < types.length; ++i)
 					{
 						boolean confirmed = false;
@@ -109,16 +131,107 @@ public class UpdatePanel extends PanelBuilder{
 								if(!((String)out).isEmpty()){
 									String str = (String)out;
 									System.out.println(str);
-									preparedStmt.setString(i + 1, str);
+									if(stringsAt[i])
+									{
+										str = "'" + str + "'";
+									}
+									query += str + ", ";
+									confirmed = true;
 								}
-								
+							}
+							else
+							{
+								return;
 							}
 						}
 					}
-					ResultSet r = sql.query(query);
-					r.close();
+					query = query.substring(0, query.length() - ", ".length());
+					query += ")";
+					System.out.println(query);
+					sql.conn.prepareStatement(query).execute();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
+					if(e1 instanceof java.sql.SQLSyntaxErrorException)
+					{
+						JOptionPane.showMessageDialog(null, "Error with SQL syntax", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		}));
+		
+		a2.addActionListener(new ButtonAction(new Thread(){
+			public void run()
+			{
+				//String arguements [] = new String[12];
+				String types [] = {
+						"SSN", 
+						"First Name", 
+						"Middle Initial",
+						"Last Name", 
+						"Brith Date (YYYY-MM-DD)", 
+						"Sex (M or F)",
+						"Address", 
+						"graduate status (undergrad or graduate)", 
+						"Visa type",
+						"Visa Experation date (YYYY-MM-DD)", 
+						"Enrollment date (YYYY-MM-DD)", 
+						"Class (YYYY)"
+						};
+				boolean stringsAt [] =
+					{
+						false,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true,
+						true
+					};
+				String query = "insert into Student values (";
+				try {
+					for(int i = 0; i < types.length; ++i)
+					{
+						boolean confirmed = false;
+						while(!confirmed)
+						{
+							Object out = JOptionPane.showInputDialog(null, "Please enter a " + types[i] + ":", "Entry for Students", JOptionPane.PLAIN_MESSAGE);
+							if(out instanceof String)
+							{
+								//TODO REGEX OR PARSE OR 
+								//SCRAP ALL OF THIS 
+								//in favor of just putting it all in as one line
+								if(!((String)out).isEmpty()){
+									String str = (String)out;
+									System.out.println(str);
+									if(stringsAt[i])
+									{
+										str = "'" + str + "'";
+									}
+									query += str + ", ";
+									confirmed = true;
+								}
+							}
+							else
+							{
+								return;
+							}
+						}
+					}
+					query = query.substring(0, query.length() - ", ".length());
+					query += ")";
+					System.out.println(query);
+					sql.conn.prepareStatement(query).execute();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+					if(e1 instanceof java.sql.SQLSyntaxErrorException)
+					{
+						JOptionPane.showMessageDialog(null, "Error with SQL syntax", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}));

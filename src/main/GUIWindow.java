@@ -13,14 +13,16 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 public class GUIWindow {
-	
-	//TODO move buttons out so that we have better OOP
-
 	//This is an example of the buttons and UI work I'd like to incorporate
 	//This is fairly simple: 
 	//	make buttons, make threads, add thread to buttons, add buttons
 	//
 	//Aside from that, we can go just about anywhere with this.
+	
+	//Right now the primary way this layout is made:
+	
+	//(panel) designed to be swapped
+	//labels and buttons that are attached to the frame at all times
 	
 	List<Thread> threads = new LinkedList<Thread>();
 	
